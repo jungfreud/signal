@@ -37,8 +37,8 @@ export interface Integration {
   /** What breaks if this is missing — used in banner copy + panel tooltip. */
   consequence: string;
   /**
-   * Env vars that must ALL be set for this integration to be configured.
-   * If any one is empty, the integration is reported as "not configured".
+   * Canonical env vars that must ALL be set for this integration to be
+   * configured. Check with getMissingIntegrationEnvVars to accept aliases.
    */
   envVars: string[];
   /**
@@ -228,6 +228,21 @@ export const INTEGRATIONS: Integration[] = [
     fixHint: "Generate a fine-grained token with read-only public_repo scope",
   },
 ];
+
+/** Server-side presence check; returns names only, never credential values. */
+export function getMissingIntegrationEnvVars(
+  integration: Integration,
+): string[] {
+  return integration.envVars.filter((name) => {
+    // Vercel Marketplace uses PUBLISHABLE_KEY; keep existing setups valid.
+    const value =
+      name === "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY"
+        ? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ||
+          process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+        : process.env[name];
+    return !value;
+  });
+}
 
 /**
  * Group integrations by category for the settings panel.
