@@ -7,7 +7,7 @@ import { mcpConfigError } from "@/lib/mcp/config";
 import { mcpToolList, toMcpResult } from "@/lib/mcp/registry";
 
 // Same ceiling as /api/chat: enrichment batches run for minutes.
-export const maxDuration = 800;
+export const maxDuration = 300;
 
 const handler = createMcpHandler(
   (server) => {

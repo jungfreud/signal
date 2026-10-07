@@ -32,7 +32,7 @@ import { trimMessages } from "@/lib/chat/trim-messages";
 // Pro/Enterprise ceiling (GA). Hobby caps at 300 and fails the build above
 // it — self-hosters on Hobby should drop this to 300; the turn time budget
 // below keeps things working either way, just with more continuation turns.
-export const maxDuration = 800;
+export const maxDuration = 300;
 
 // Stop the agent loop well before maxDuration so the turn ends CLEANLY:
 // the model's progress streams out, onFinish runs, and the chat is saved.
@@ -40,7 +40,7 @@ export const maxDuration = 800;
 // trips (a 150s enrichment chunk plus model latency). When a turn is cut
 // short, the client sees a `data-turn-paused` part and auto-continues in a
 // fresh request, so long pipelines span windows instead of dying silently.
-const TURN_TIME_BUDGET_MS = 600_000;
+const TURN_TIME_BUDGET_MS = maxDuration * 1000 - 200_000;
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
